@@ -4,6 +4,8 @@ const path = require('path')
 
 const { User, UserClientFields, validateCredentials } = require('../models/user')
 
+const { Survey } = require('../models/survey')
+
 const { generateAuthToken, requireAuthentication } = require('../lib/auth')
 
 const router = Router()
@@ -44,18 +46,23 @@ router.get('/list', async function (req, res, next) {
 /*
  * Route to account page.
  */
-router.get('/:userId', requireAuthentication, verifyUserId, async function (req, res, next) {
-    try {
-      const user = await User.findByPk(req.params.userId)
-      if (user) {
+router.get('/account', async function (req, res, next) {
         res.status(200).sendFile(path.join(__dirname, "../public/account.html"))
-      } else {
-        next()
-      }
-    } catch (e) {
-      next(e)
+})
+
+router.get('/:userId/surveys', async function (req, res, next) {
+  try {
+    const user = await User.findByPk(req.params.userId)
+    if (user) {
+      const surveys = await Survey.findAll({ where: { userId: req.params.userId }})
+      res.status(200).send(surveys)
+    } else {
+      next()
     }
-  })
+  } catch (e) {
+    next(e)
+  }
+})
 
 /*
 * Get current user ID and name

@@ -1,8 +1,7 @@
 const { DataTypes } = require('sequelize')
-
 const sequelize = require('../lib/sequelize')
-
 const bcrypt = require('bcryptjs')
+const { Survey } = require('./survey')
 
 const User = sequelize.define('user', {
   name: { type: DataTypes.STRING, allowNull: false, unique: true },
@@ -14,6 +13,9 @@ const User = sequelize.define('user', {
     }
   }
 })
+
+User.hasMany(Survey, { foreignKey: { allowNull: false } })
+Survey.belongsTo(User)
 
 exports.User = User
 
