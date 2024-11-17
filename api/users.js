@@ -78,7 +78,8 @@ router.post('/login', async function (req, res, next) {
         const user = await User.findOne({ where: { name: req.body.name}})
         const token = generateAuthToken(user.id)
         res.status(200).send({
-          token: token
+          token: token,
+          navTo: path.join(__dirname, "..")
         })
       } else {
         res.status(401).send({

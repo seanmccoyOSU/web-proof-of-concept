@@ -1,11 +1,16 @@
+require('dotenv').config()
+
 const express = require('express')
 const api = require('./api')
+const sequelize = require('./lib/sequelize')
 
 const app = express()
 
 const port = 8000
 
 app.use(express.json())
+
+app.use(express.static('public'))
 
 app.use('/', api)
 
@@ -26,6 +31,8 @@ app.use('*', function (err, req, res, next) {
     })
 })
 
-app.listen(port, function () {
-    console.log("== Server is running on port", port)
+sequelize.sync().then(function () {
+    app.listen(port, function () {
+        console.log("== Server is running on port", port)
+    })
 })
