@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const { ValidationError } = require('sequelize')
+const path = require('path')
 
 const { User, UserClientFields, validateCredentials } = require('../models/user')
 
@@ -17,6 +18,39 @@ function verifyUserId(req, res, next) {
     next()
   }
 }
+
+/*
+ * Route to login page
+ */
+router.get('/login', async function (req, res, next) {
+    res.status(200).sendFile(path.join(__dirname, "../public/login.html"))
+})
+
+/*
+ * Route to account page.
+ */
+router.get('/:userId', requireAuthentication, verifyUserId, async function (req, res, next) {
+    try {
+      const user = await User.findByPk(req.params.userId)
+      if (user) {
+        res.status(200).send({
+          surveys: user.surveys
+        }).sendFile(path.join(__dirname, "../public/account.html"))
+      } else {
+        next()
+      }
+    } catch (e) {
+      next(e)
+    }
+  })
+
+
+/*
+ * Route to registration page
+ */
+router.get('/', async function (req, res, next) {
+    res.status(200).sendFile(path.join(__dirname, "../public/register.html"))
+})
 
 /*
  * Route to register a new user.
@@ -55,23 +89,5 @@ router.post('/login', async function (req, res, next) {
       next(e)
     }
 })
-
-/*
- * Route to fetch info about a specific user.
- */
-router.get('/:userId', requireAuthentication, verifyUserId, async function (req, res, next) {
-    try {
-      const user = await User.findByPk(req.params.userId)
-      if (user) {
-        res.status(200).send({
-          surveys: user.surveys
-        })
-      } else {
-        next()
-      }
-    } catch (e) {
-      next(e)
-    }
-  })
   
 module.exports = router
