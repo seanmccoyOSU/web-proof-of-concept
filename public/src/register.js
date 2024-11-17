@@ -1,4 +1,4 @@
-function LoginUser() {
+function RegisterUser() {
     fetch(window.location.href, { 
         method: "POST",
         body: JSON
@@ -23,10 +23,9 @@ function InterpretResponse(json) {
       errorText.textContent = json.error
       document.getElementById("body").appendChild(errorText)
     } else {
-      localStorage.setItem("token", json.token)
       window.location.assign(window.location.origin + json.navTo)
     }
 }
 
 
-document.getElementById("login-button").addEventListener("click", LoginUser)
+document.getElementById("register-button").addEventListener("click", RegisterUser)

@@ -27,15 +27,28 @@ router.get('/login', async function (req, res, next) {
 })
 
 /*
+ * Route to registration page
+ */
+router.get('/register', async function (req, res, next) {
+  res.status(200).sendFile(path.join(__dirname, "../public/register.html"))
+})
+
+/*
+ * Get list of users
+ */
+router.get('/list', async function (req, res, next) {
+  const users = await User.findAll({ attributes: ['name'] })
+  res.status(200).send(users)
+})
+
+/*
  * Route to account page.
  */
 router.get('/:userId', requireAuthentication, verifyUserId, async function (req, res, next) {
     try {
       const user = await User.findByPk(req.params.userId)
       if (user) {
-        res.status(200).send({
-          surveys: user.surveys
-        }).sendFile(path.join(__dirname, "../public/account.html"))
+        res.status(200).sendFile(path.join(__dirname, "../public/account.html"))
       } else {
         next()
       }
@@ -44,21 +57,30 @@ router.get('/:userId', requireAuthentication, verifyUserId, async function (req,
     }
   })
 
-
 /*
- * Route to registration page
- */
-router.get('/', async function (req, res, next) {
-    res.status(200).sendFile(path.join(__dirname, "../public/register.html"))
+* Get current user ID and name
+*/
+router.put('/', requireAuthentication, async function (req, res, next) {
+  try {
+    const user = await User.findByPk(req.user)
+    if (user) {
+      res.status(200).send({ id: req.user, name: user.name })
+    } else {
+      next()
+    }
+  } catch (e) {
+    next(e)
+  }
+  
 })
 
 /*
  * Route to register a new user.
  */
-router.post('/', async function (req, res, next) {
+router.post('/register', async function (req, res, next) {
     try {
         const user = await User.create(req.body, UserClientFields)
-        res.status(201).send({ id: user.id })
+        res.status(201).send({ id: user.id, navTo: "" })
         } catch (e) {
         if (e instanceof ValidationError) {
             res.status(400).send({ error: e.message })
@@ -79,7 +101,7 @@ router.post('/login', async function (req, res, next) {
         const token = generateAuthToken(user.id)
         res.status(200).send({
           token: token,
-          navTo: path.join(__dirname, "..")
+          navTo: ""
         })
       } else {
         res.status(401).send({

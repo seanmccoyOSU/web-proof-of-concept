@@ -1,13 +1,16 @@
 const { Router } = require('express')
 const path = require('path')
 
+//const { User } = require('../models/user')
+
 const usersRouter = require('./users')
 
 const router = Router()
 
 router.use('/users', usersRouter)
 
-router.get('/', function(req,res,next) {
+router.get('/', async function(req,res,next) {
+    
     //res.status(200).sendFile(path.join(__dirname, "../public/index.html"))
     //res.status(200).sendFile("index.html", { root: "./public" })
     res.status(200).sendFile("index.html")
