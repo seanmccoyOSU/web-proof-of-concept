@@ -36,6 +36,7 @@ function LoadCurrentUser() {
 function InterpretUser(json) {
     console.log(json)
     if (!json.error) {
+        document.getElementById("logout").removeAttribute("hidden")
         let header = document.createElement("h2")
         header.textContent = "Logged in as"
         document.getElementById("body").appendChild(header)
@@ -54,4 +55,4 @@ function LogOut() {
 //document.addEventListener("DOMContentLoaded", LoadCurrentUser)
 document.addEventListener("DOMContentLoaded", LoadUsers)
 document.getElementById("logout").addEventListener("click", LogOut)
-document.getElementById("account").addEventListener("click", AccessAcount)
+//document.getElementById("account").addEventListener("click", AccessAcount)

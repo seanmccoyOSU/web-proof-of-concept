@@ -19,8 +19,20 @@ function LoadCurrentUser() {
 function InterpretUser(json) {
     console.log(json)
     if (!json.error) {
+        let login_message = document.createElement("p")
+        login_message.textContent = `hello ${json.name}!`
+        document.getElementById("top").appendChild(login_message)
+
+        document.getElementById("createSurvey").removeAttribute("hidden")
+        document.getElementById("mySurveys").removeAttribute("hidden")
+
         let usersid = json.id
         LoadSurveys(usersid)
+    }
+    else {
+        let error_message = document.createElement("p")
+        error_message.textContent = "You are not logged in"
+        document.getElementById("body").appendChild(error_message)
     }
 }
 
